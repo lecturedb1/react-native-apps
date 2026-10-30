@@ -1,16 +1,8 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
-export default function RecipeDetail({ recipe, onBack }) {
+export default function RecipeDetail({ recipe }) {
   return (
     <>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="레시피 목록으로 돌아가기"
-        onPress={onBack}
-      >
-        <Text style={styles.backButton}>← 레시피 목록</Text>
-      </Pressable>
-
       <Image source={{ uri: recipe.image }} style={styles.image} />
       <Text style={styles.category}>{recipe.category}</Text>
       <Text style={styles.title}>{recipe.title}</Text>
@@ -25,11 +17,6 @@ export default function RecipeDetail({ recipe, onBack }) {
 }
 
 const styles = StyleSheet.create({
-  backButton: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 20,
-  },
   image: {
     width: "100%",
     height: 230,
