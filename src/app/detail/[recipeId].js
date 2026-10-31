@@ -1,10 +1,12 @@
+import { useLocalSearchParams } from "expo-router";
 import { ScrollView, StyleSheet } from "react-native";
 
-import RecipeDetail from "../components/RecipeDetail";
-import recipes from "../data/recipes";
+import RecipeDetail from "../../../components/RecipeDetail";
+import recipes from "../../../data/recipes";
 
-export default function DetailScreen({ route }) {
-  const recipe = recipes.find((item) => item.id === route.params.recipeId);
+export default function DetailScreen() {
+  const { recipeId } = useLocalSearchParams();
+  const recipe = recipes.find((item) => item.id === Number(recipeId));
 
   return (
     <ScrollView
