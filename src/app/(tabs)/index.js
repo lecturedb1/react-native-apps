@@ -1,8 +1,8 @@
 import { router } from "expo-router";
 import { ScrollView, StyleSheet, Text, TextInput } from "react-native";
 
-import RecipeCard from "../../components/RecipeCard";
-import recipes from "../../data/recipes";
+import RecipeCard from "../../../components/RecipeCard";
+import recipes from "../../../data/recipes";
 
 export default function ListScreen() {
   return (
