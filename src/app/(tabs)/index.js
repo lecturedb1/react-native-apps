@@ -1,42 +1,45 @@
 import { router } from "expo-router";
-import { ScrollView, StyleSheet, Text, TextInput } from "react-native";
+import { FlatList, StyleSheet, Text, TextInput } from "react-native";
 
 import RecipeCard from "../../../components/RecipeCard";
 import recipes from "../../../data/recipes";
 
 export default function ListScreen() {
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.scrollContent}
-    >
-      <Text style={styles.headerTitle}>오늘의 레시피</Text>
-
-      <TextInput
-        placeholder="어떤 요리를 찾으세요?"
-        style={styles.searchInput}
-      />
-
-      <Text style={styles.sectionTitle}>인기 레시피</Text>
-
-      {recipes.map((recipe) => (
+    <FlatList
+      data={recipes}
+      keyExtractor={(item) => String(item.id)}
+      renderItem={({ item }) => (
         <RecipeCard
-          key={recipe.id}
-          recipe={recipe}
+          recipe={item}
           onPress={() =>
             router.navigate({
               pathname: "/detail/[recipeId]",
-              params: { recipeId: recipe.id },
+              params: { recipeId: item.id },
             })
           }
         />
-      ))}
-    </ScrollView>
+      )}
+      ListHeaderComponent={
+        <>
+          <Text style={styles.headerTitle}>오늘의 레시피</Text>
+
+          <TextInput
+            placeholder="어떤 요리를 찾으세요?"
+            style={styles.searchInput}
+          />
+
+          <Text style={styles.sectionTitle}>인기 레시피</Text>
+        </>
+      }
+      style={styles.list}
+      contentContainerStyle={styles.scrollContent}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
+  list: {
     flex: 1,
     backgroundColor: "#F8F9FA",
   },
