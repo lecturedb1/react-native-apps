@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { router } from "expo-router";
 import {
   FlatList,
@@ -10,16 +10,20 @@ import {
 } from "react-native";
 
 import RecipeCard from "../../../components/RecipeCard";
-import recipes from "../../../data/recipes";
+import { RecipeContext } from "../../../context/RecipeContext";
 
 const getCategory = (recipe) => recipe.category.split(" · ")[0];
-const categories = ["전체", ...new Set(recipes.map(getCategory))];
 
 export default function ListScreen() {
+  const { recipeList } = useContext(RecipeContext);
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("전체");
+  const categories = useMemo(
+    () => ["전체", ...new Set(recipeList.map(getCategory))],
+    [recipeList],
+  );
 
-  const filteredRecipes = recipes.filter((recipe) => {
+  const filteredRecipes = recipeList.filter((recipe) => {
     const matchesQuery = recipe.title
       .toLowerCase()
       .includes(query.trim().toLowerCase());

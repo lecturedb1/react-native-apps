@@ -1,15 +1,27 @@
-import { View, Text } from "react-native";
+import { useContext } from "react";
+import { ScrollView, StyleSheet, Text } from "react-native";
 
-export default function Favorites() {
+import { RecipeContext } from "../../../context/RecipeContext";
+
+export default function FavoritesScreen() {
+  const { recipeList } = useContext(RecipeContext);
+
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.scrollContent}
     >
-      <Text>Favorites Screen</Text>
-    </View>
+      <Text>{JSON.stringify(recipeList, null, 2)}</Text>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: "#F8F9FA",
+  },
+  scrollContent: {
+    padding: 16,
+  },
+});

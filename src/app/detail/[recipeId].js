@@ -1,12 +1,14 @@
+import { useContext } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView, StyleSheet } from "react-native";
 
 import RecipeDetail from "../../../components/RecipeDetail";
-import recipes from "../../../data/recipes";
+import { RecipeContext } from "../../../context/RecipeContext";
 
 export default function DetailScreen() {
   const { recipeId } = useLocalSearchParams();
-  const recipe = recipes.find((item) => item.id === Number(recipeId));
+  const { recipeList } = useContext(RecipeContext);
+  const recipe = recipeList.find((item) => item.id === Number(recipeId));
 
   return (
     <ScrollView
