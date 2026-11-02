@@ -1,13 +1,37 @@
+import { useState } from "react";
 import { router } from "expo-router";
-import { FlatList, StyleSheet, Text, TextInput } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 import RecipeCard from "../../../components/RecipeCard";
 import recipes from "../../../data/recipes";
 
+const getCategory = (recipe) => recipe.category.split(" · ")[0];
+const categories = ["전체", ...new Set(recipes.map(getCategory))];
+
 export default function ListScreen() {
+  const [query, setQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("전체");
+
+  const filteredRecipes = recipes.filter((recipe) => {
+    const matchesQuery = recipe.title
+      .toLowerCase()
+      .includes(query.trim().toLowerCase());
+    const matchesCategory =
+      selectedCategory === "전체" || getCategory(recipe) === selectedCategory;
+
+    return matchesQuery && matchesCategory;
+  });
+
   return (
     <FlatList
-      data={recipes}
+      data={filteredRecipes}
       keyExtractor={(item) => String(item.id)}
       renderItem={({ item }) => (
         <RecipeCard
@@ -26,12 +50,39 @@ export default function ListScreen() {
 
           <TextInput
             placeholder="어떤 요리를 찾으세요?"
+            value={query}
+            onChangeText={setQuery}
             style={styles.searchInput}
           />
+
+          <View style={styles.categoryList}>
+            {categories.map((category) => (
+              <Pressable
+                key={category}
+                onPress={() => setSelectedCategory(category)}
+                style={[
+                  styles.categoryButton,
+                  selectedCategory === category &&
+                    styles.selectedCategoryButton,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.categoryButtonText,
+                    selectedCategory === category &&
+                      styles.selectedCategoryButtonText,
+                  ]}
+                >
+                  {category}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
 
           <Text style={styles.sectionTitle}>인기 레시피</Text>
         </>
       }
+      ListEmptyComponent={<Text>검색 결과가 없습니다.</Text>}
       style={styles.list}
       contentContainerStyle={styles.scrollContent}
     />
@@ -56,8 +107,30 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 15,
     borderRadius: 12,
-    marginBottom: 24,
     fontSize: 15,
+  },
+  categoryList: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 12,
+    marginBottom: 24,
+  },
+  categoryButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    backgroundColor: "#E9ECEF",
+  },
+  selectedCategoryButton: {
+    backgroundColor: "#333",
+  },
+  categoryButtonText: {
+    color: "#222",
+    fontWeight: "600",
+  },
+  selectedCategoryButtonText: {
+    color: "white",
   },
   sectionTitle: {
     fontSize: 19,
