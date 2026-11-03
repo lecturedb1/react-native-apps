@@ -1,5 +1,6 @@
 import { useContext, useMemo, useState } from "react";
 import { router } from "expo-router";
+import Feather from "@expo/vector-icons/Feather";
 import {
   FlatList,
   Pressable,
@@ -34,72 +35,86 @@ export default function ListScreen() {
   });
 
   return (
-    <FlatList
-      data={filteredRecipes}
-      keyExtractor={(item) => String(item.id)}
-      renderItem={({ item }) => (
-        <RecipeCard
-          recipe={item}
-          onPress={() =>
-            router.navigate({
-              pathname: "/detail/[recipeId]",
-              params: { recipeId: item.id },
-            })
-          }
-        />
-      )}
-      ListHeaderComponent={
-        <>
-          <Text style={styles.headerTitle}>오늘의 레시피</Text>
-
-          <TextInput
-            placeholder="어떤 요리를 찾으세요?"
-            value={query}
-            onChangeText={setQuery}
-            style={styles.searchInput}
+    <View style={styles.container}>
+      <FlatList
+        data={filteredRecipes}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => (
+          <RecipeCard
+            recipe={item}
+            onPress={() =>
+              router.navigate({
+                pathname: "/detail/[recipeId]",
+                params: { recipeId: item.id },
+              })
+            }
           />
+        )}
+        ListHeaderComponent={
+          <>
+            <Text style={styles.headerTitle}>오늘의 레시피</Text>
 
-          <View style={styles.categoryList}>
-            {categories.map((category) => (
-              <Pressable
-                key={category}
-                onPress={() => setSelectedCategory(category)}
-                style={[
-                  styles.categoryButton,
-                  selectedCategory === category &&
-                    styles.selectedCategoryButton,
-                ]}
-              >
-                <Text
+            <TextInput
+              placeholder="어떤 요리를 찾으세요?"
+              value={query}
+              onChangeText={setQuery}
+              style={styles.searchInput}
+            />
+
+            <View style={styles.categoryList}>
+              {categories.map((category) => (
+                <Pressable
+                  key={category}
+                  onPress={() => setSelectedCategory(category)}
                   style={[
-                    styles.categoryButtonText,
+                    styles.categoryButton,
                     selectedCategory === category &&
-                      styles.selectedCategoryButtonText,
+                      styles.selectedCategoryButton,
                   ]}
                 >
-                  {category}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+                  <Text
+                    style={[
+                      styles.categoryButtonText,
+                      selectedCategory === category &&
+                        styles.selectedCategoryButtonText,
+                    ]}
+                  >
+                    {category}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
 
-          <Text style={styles.sectionTitle}>인기 레시피</Text>
-        </>
-      }
-      ListEmptyComponent={<Text>검색 결과가 없습니다.</Text>}
-      style={styles.list}
-      contentContainerStyle={styles.scrollContent}
-    />
+            <Text style={styles.sectionTitle}>인기 레시피</Text>
+          </>
+        }
+        ListEmptyComponent={<Text>검색 결과가 없습니다.</Text>}
+        style={styles.list}
+        contentContainerStyle={styles.scrollContent}
+      />
+
+      <Pressable
+        onPress={() => router.push("/add")}
+        style={styles.addButton}
+      >
+        <Feather name="plus" size={30} color="white" />
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F8F9FA",
+  },
   list: {
     flex: 1,
     backgroundColor: "#F8F9FA",
   },
   scrollContent: {
     padding: 16,
+    paddingBottom: 96,
   },
   headerTitle: {
     fontSize: 26,
@@ -141,5 +156,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 14,
     color: "#333",
+  },
+  addButton: {
+    position: "absolute",
+    right: 22,
+    bottom: 22,
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(17, 17, 17, 0.75)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 6,
+    elevation: 6,
   },
 });
