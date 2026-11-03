@@ -6,6 +6,7 @@ export const RecipeContext = createContext(null);
 
 export function RecipeProvider({ children }) {
   const [recipeList, setRecipeList] = useState(recipes);
+  const [favoriteIds, setFavoriteIds] = useState([]);
 
   const addRecipe = useCallback((newRecipe) => {
     setRecipeList((current) => {
@@ -14,8 +15,18 @@ export function RecipeProvider({ children }) {
     });
   }, []);
 
+  const toggleFavorite = (id) => {
+    setFavoriteIds((current) =>
+      current.includes(id)
+        ? current.filter((favoriteId) => favoriteId !== id)
+        : [...current, id],
+    );
+  };
+
   return (
-    <RecipeContext.Provider value={{ recipeList, addRecipe }}>
+    <RecipeContext.Provider
+      value={{ recipeList, favoriteIds, addRecipe, toggleFavorite }}
+    >
       {children}
     </RecipeContext.Provider>
   );

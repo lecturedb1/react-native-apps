@@ -16,7 +16,7 @@ import { RecipeContext } from "../../../context/RecipeContext";
 const getCategory = (recipe) => recipe.category.split(" · ")[0];
 
 export default function ListScreen() {
-  const { recipeList } = useContext(RecipeContext);
+  const { recipeList, favoriteIds, toggleFavorite } = useContext(RecipeContext);
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const categories = useMemo(
@@ -42,6 +42,8 @@ export default function ListScreen() {
         renderItem={({ item }) => (
           <RecipeCard
             recipe={item}
+            isFavorite={favoriteIds.includes(item.id)}
+            onToggleFavorite={() => toggleFavorite(item.id)}
             onPress={() =>
               router.navigate({
                 pathname: "/detail/[recipeId]",
@@ -94,7 +96,7 @@ export default function ListScreen() {
       />
 
       <Pressable
-        onPress={() => router.push("/add")}
+        onPress={() => router.navigate("/add")}
         style={styles.addButton}
       >
         <Feather name="plus" size={30} color="white" />
