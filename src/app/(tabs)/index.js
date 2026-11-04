@@ -12,11 +12,13 @@ import {
 
 import RecipeCard from "../../../components/RecipeCard";
 import { RecipeContext } from "../../../context/RecipeContext";
+import { useThemeColors } from "../../../utils/theme";
 
 const getCategory = (recipe) => recipe.category.split(" · ")[0];
 
 export default function ListScreen() {
   const { recipeList, favoriteIds, toggleFavorite } = useContext(RecipeContext);
+  const colors = useThemeColors();
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const categories = useMemo(
@@ -35,7 +37,7 @@ export default function ListScreen() {
   });
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={filteredRecipes}
         keyExtractor={(item) => String(item.id)}
@@ -54,13 +56,19 @@ export default function ListScreen() {
         )}
         ListHeaderComponent={
           <>
-            <Text style={styles.headerTitle}>오늘의 레시피</Text>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>
+              오늘의 레시피
+            </Text>
 
             <TextInput
               placeholder="어떤 요리를 찾으세요?"
               value={query}
               onChangeText={setQuery}
-              style={styles.searchInput}
+              placeholderTextColor={colors.secondaryText}
+              style={[
+                styles.searchInput,
+                { backgroundColor: colors.card, color: colors.text },
+              ]}
             />
 
             <View style={styles.categoryList}>
@@ -70,6 +78,7 @@ export default function ListScreen() {
                   onPress={() => setSelectedCategory(category)}
                   style={[
                     styles.categoryButton,
+                    { backgroundColor: colors.chip },
                     selectedCategory === category &&
                       styles.selectedCategoryButton,
                   ]}
@@ -77,6 +86,7 @@ export default function ListScreen() {
                   <Text
                     style={[
                       styles.categoryButtonText,
+                      { color: colors.text },
                       selectedCategory === category &&
                         styles.selectedCategoryButtonText,
                     ]}
@@ -87,11 +97,15 @@ export default function ListScreen() {
               ))}
             </View>
 
-            <Text style={styles.sectionTitle}>인기 레시피</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              인기 레시피
+            </Text>
           </>
         }
-        ListEmptyComponent={<Text>검색 결과가 없습니다.</Text>}
-        style={styles.list}
+        ListEmptyComponent={
+          <Text style={{ color: colors.text }}>검색 결과가 없습니다.</Text>
+        }
+        style={[styles.list, { backgroundColor: colors.background }]}
         contentContainerStyle={styles.scrollContent}
       />
 
@@ -108,11 +122,9 @@ export default function ListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F9FA",
   },
   list: {
     flex: 1,
-    backgroundColor: "#F8F9FA",
   },
   scrollContent: {
     padding: 16,
@@ -121,11 +133,9 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#222",
     marginBottom: 16,
   },
   searchInput: {
-    backgroundColor: "white",
     padding: 15,
     borderRadius: 12,
     fontSize: 15,
@@ -141,13 +151,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 8,
-    backgroundColor: "#E9ECEF",
   },
   selectedCategoryButton: {
     backgroundColor: "#333",
   },
   categoryButtonText: {
-    color: "#222",
     fontWeight: "600",
   },
   selectedCategoryButtonText: {
@@ -157,7 +165,6 @@ const styles = StyleSheet.create({
     fontSize: 19,
     fontWeight: "bold",
     marginBottom: 14,
-    color: "#333",
   },
   addButton: {
     position: "absolute",

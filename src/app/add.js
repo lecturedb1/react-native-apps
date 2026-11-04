@@ -14,9 +14,11 @@ import {
 
 import { RecipeContext } from "../../context/RecipeContext";
 import { getImageUri, saveImage } from "../../utils/imageStorage";
+import { useThemeColors } from "../../utils/theme";
 
 export default function AddScreen() {
   const { addRecipe } = useContext(RecipeContext);
+  const colors = useThemeColors();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -67,32 +69,72 @@ export default function AddScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={styles.container}
+    >
       <TextInput
         placeholder="레시피 이름 *"
         value={title}
         onChangeText={setTitle}
-        style={styles.input}
+        placeholderTextColor={colors.secondaryText}
+        style={[
+          styles.input,
+          {
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            color: colors.text,
+          },
+        ]}
       />
       <TextInput
         placeholder="카테고리 *"
         value={category}
         onChangeText={setCategory}
-        style={styles.input}
+        placeholderTextColor={colors.secondaryText}
+        style={[
+          styles.input,
+          {
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            color: colors.text,
+          },
+        ]}
       />
       <TextInput
         placeholder="레시피 설명"
         value={description}
         onChangeText={setDescription}
         multiline
-        style={[styles.input, styles.multiline]}
+        placeholderTextColor={colors.secondaryText}
+        style={[
+          styles.input,
+          styles.multiline,
+          {
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            color: colors.text,
+          },
+        ]}
       />
       <View style={styles.imageButtonRow}>
-        <Pressable onPress={pickImage} style={styles.imageButton}>
-          <Text>갤러리에서 선택</Text>
+        <Pressable
+          onPress={pickImage}
+          style={[
+            styles.imageButton,
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        >
+          <Text style={{ color: colors.text }}>갤러리에서 선택</Text>
         </Pressable>
-        <Pressable onPress={takePhoto} style={styles.imageButton}>
-          <Text>사진 촬영</Text>
+        <Pressable
+          onPress={takePhoto}
+          style={[
+            styles.imageButton,
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        >
+          <Text style={{ color: colors.text }}>사진 촬영</Text>
         </Pressable>
       </View>
       {image && (
@@ -111,9 +153,7 @@ const styles = StyleSheet.create({
     minHeight: 52,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
     borderRadius: 10,
-    backgroundColor: "white",
   },
   multiline: { minHeight: 100, paddingTop: 14, textAlignVertical: "top" },
   imageButtonRow: { flexDirection: "row", gap: 12 },
@@ -123,9 +163,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#D1D5DB",
     borderRadius: 10,
-    backgroundColor: "white",
   },
   image: { width: "100%", height: 240, borderRadius: 10 },
   button: {

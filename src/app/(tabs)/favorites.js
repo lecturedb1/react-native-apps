@@ -4,16 +4,18 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 
 import RecipeCard from "../../../components/RecipeCard";
 import { RecipeContext } from "../../../context/RecipeContext";
+import { useThemeColors } from "../../../utils/theme";
 
 export default function FavoritesScreen() {
   const { recipeList, favoriteIds, toggleFavorite } =
     useContext(RecipeContext);
+  const colors = useThemeColors();
   const favorites = recipeList.filter((recipe) =>
     favoriteIds.includes(recipe.id),
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={favorites}
         keyExtractor={(item) => String(item.id)}
@@ -30,9 +32,13 @@ export default function FavoritesScreen() {
             }
           />
         )}
-        ListHeaderComponent={<Text style={styles.title}>즐겨찾기</Text>}
+        ListHeaderComponent={
+          <Text style={[styles.title, { color: colors.text }]}>즐겨찾기</Text>
+        }
         ListEmptyComponent={
-          <Text style={styles.empty}>즐겨찾기한 레시피가 없습니다.</Text>
+          <Text style={{ color: colors.secondaryText }}>
+            즐겨찾기한 레시피가 없습니다.
+          </Text>
         }
         contentContainerStyle={styles.content}
       />
@@ -43,7 +49,6 @@ export default function FavoritesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F9FA",
   },
   content: {
     padding: 16,
@@ -51,10 +56,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#222",
     marginBottom: 16,
-  },
-  empty: {
-    color: "#777",
   },
 });

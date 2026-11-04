@@ -2,6 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { getImageUri } from "../utils/imageStorage";
+import { useThemeColors } from "../utils/theme";
 
 export default function RecipeCard({
   recipe,
@@ -9,8 +10,10 @@ export default function RecipeCard({
   onPress,
   onToggleFavorite,
 }) {
+  const colors = useThemeColors();
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: colors.card }]}>
       <Pressable
         style={styles.content}
         onPress={onPress}
@@ -18,9 +21,16 @@ export default function RecipeCard({
         <Image source={{ uri: getImageUri(recipe.image) }} style={styles.image} />
 
         <View style={styles.info}>
-          <Text style={styles.category}>{recipe.category}</Text>
-          <Text style={styles.title}>{recipe.title}</Text>
-          <Text numberOfLines={2} style={styles.description}>
+          <Text style={[styles.category, { color: colors.secondaryText }]}>
+            {recipe.category}
+          </Text>
+          <Text style={[styles.title, { color: colors.text }]}>
+            {recipe.title}
+          </Text>
+          <Text
+            numberOfLines={2}
+            style={[styles.description, { color: colors.secondaryText }]}
+          >
             {recipe.description}
           </Text>
         </View>
@@ -43,7 +53,6 @@ export default function RecipeCard({
 const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
-    backgroundColor: "white",
     borderRadius: 14,
     marginBottom: 14,
     padding: 12,
@@ -64,18 +73,15 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   category: {
-    color: "#777",
     fontSize: 12,
     marginBottom: 6,
   },
   title: {
     fontSize: 17,
     fontWeight: "bold",
-    color: "#222",
     marginBottom: 8,
   },
   description: {
-    color: "#666",
     fontSize: 13,
     lineHeight: 19,
   },
