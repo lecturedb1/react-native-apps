@@ -1,6 +1,8 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { getImageUri } from "../utils/imageStorage";
+
 export default function RecipeCard({
   recipe,
   isFavorite,
@@ -13,7 +15,7 @@ export default function RecipeCard({
         style={styles.content}
         onPress={onPress}
       >
-        <Image source={{ uri: recipe.image }} style={styles.image} />
+        <Image source={{ uri: getImageUri(recipe.image) }} style={styles.image} />
 
         <View style={styles.info}>
           <Text style={styles.category}>{recipe.category}</Text>

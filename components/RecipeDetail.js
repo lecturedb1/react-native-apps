@@ -1,9 +1,11 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 
+import { getImageUri } from "../utils/imageStorage";
+
 export default function RecipeDetail({ recipe }) {
   return (
     <>
-      <Image source={{ uri: recipe.image }} style={styles.image} />
+      <Image source={{ uri: getImageUri(recipe.image) }} style={styles.image} />
       <Text style={styles.category}>{recipe.category}</Text>
       <Text style={styles.title}>{recipe.title}</Text>
       <Text style={styles.description}>{recipe.description}</Text>

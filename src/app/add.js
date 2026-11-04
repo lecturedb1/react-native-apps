@@ -13,6 +13,7 @@ import {
 } from "react-native";
 
 import { RecipeContext } from "../../context/RecipeContext";
+import { getImageUri, saveImage } from "../../utils/imageStorage";
 
 export default function AddScreen() {
   const { addRecipe } = useContext(RecipeContext);
@@ -28,7 +29,7 @@ export default function AddScreen() {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(await saveImage(result.assets[0].uri));
     }
   };
 
@@ -46,7 +47,7 @@ export default function AddScreen() {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(await saveImage(result.assets[0].uri));
     }
   };
 
@@ -94,7 +95,9 @@ export default function AddScreen() {
           <Text>사진 촬영</Text>
         </Pressable>
       </View>
-      {image && <Image source={{ uri: image }} style={styles.image} />}
+      {image && (
+        <Image source={{ uri: getImageUri(image) }} style={styles.image} />
+      )}
       <Pressable onPress={handleSave} style={styles.button}>
         <Text style={styles.buttonText}>추가하기</Text>
       </Pressable>
