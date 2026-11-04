@@ -1,12 +1,15 @@
 import { useContext, useState } from "react";
 import { router } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
 import {
   Alert,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  View,
 } from "react-native";
 
 import { RecipeContext } from "../../context/RecipeContext";
@@ -17,6 +20,35 @@ export default function AddScreen() {
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const takePhoto = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (!permission.granted) {
+      Alert.alert("권한 필요", "사진 촬영을 위해 카메라 권한이 필요합니다.");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   const handleSave = () => {
     if (!title.trim() || !category.trim() || !image.trim()) {
@@ -54,14 +86,15 @@ export default function AddScreen() {
         multiline
         style={[styles.input, styles.multiline]}
       />
-      <TextInput
-        placeholder="이미지 URL *"
-        value={image}
-        onChangeText={setImage}
-        autoCapitalize="none"
-        keyboardType="url"
-        style={styles.input}
-      />
+      <View style={styles.imageButtonRow}>
+        <Pressable onPress={pickImage} style={styles.imageButton}>
+          <Text>갤러리에서 선택</Text>
+        </Pressable>
+        <Pressable onPress={takePhoto} style={styles.imageButton}>
+          <Text>사진 촬영</Text>
+        </Pressable>
+      </View>
+      {image && <Image source={{ uri: image }} style={styles.image} />}
       <Pressable onPress={handleSave} style={styles.button}>
         <Text style={styles.buttonText}>추가하기</Text>
       </Pressable>
@@ -80,6 +113,18 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   multiline: { minHeight: 100, paddingTop: 14, textAlignVertical: "top" },
+  imageButtonRow: { flexDirection: "row", gap: 12 },
+  imageButton: {
+    flex: 1,
+    minHeight: 52,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+    borderRadius: 10,
+    backgroundColor: "white",
+  },
+  image: { width: "100%", height: 240, borderRadius: 10 },
   button: {
     minHeight: 52,
     alignItems: "center",
