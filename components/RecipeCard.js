@@ -22,7 +22,7 @@ export default function RecipeCard({
 
         <View style={styles.info}>
           <Text style={[styles.category, { color: colors.secondaryText }]}>
-            {recipe.category}
+            {recipe.category} · {recipe.cookingTime}분
           </Text>
           <Text style={[styles.title, { color: colors.text }]}>
             {recipe.title}

@@ -15,7 +15,7 @@ import RecipeCard from "../../../components/RecipeCard";
 import { RecipeContext } from "../../../context/RecipeContext";
 import { useThemeColors } from "../../../utils/theme";
 
-const getCategory = (recipe) => recipe.category.split(" · ")[0];
+const getCategory = (recipe) => recipe.category;
 
 export default function ListScreen() {
   const { recipeList, favoriteIds, toggleFavorite, deleteAllRecipes } =
