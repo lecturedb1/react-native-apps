@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { router } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import {
   Alert,
@@ -17,12 +17,16 @@ import { getImageUri, saveImage } from "../../utils/imageStorage";
 import { useThemeColors } from "../../utils/theme";
 
 export default function AddScreen() {
-  const { addRecipe } = useContext(RecipeContext);
+  const { recipeList, addRecipe, updateRecipe } = useContext(RecipeContext);
+  const { recipeId } = useLocalSearchParams();
+  const id = Number(recipeId);
+  const recipe = recipeList.find((item) => item.id === id);
+  const isEditing = Boolean(recipe);
   const colors = useThemeColors();
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
+  const [title, setTitle] = useState(recipe?.title ?? "");
+  const [category, setCategory] = useState(recipe?.category ?? "");
+  const [description, setDescription] = useState(recipe?.description ?? "");
+  const [image, setImage] = useState(recipe?.image ?? "");
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -59,91 +63,104 @@ export default function AddScreen() {
       return;
     }
 
-    addRecipe({
+    const recipeData = {
       title: title.trim(),
       category: category.trim(),
       description: description.trim(),
       image: image.trim(),
-    });
+    };
+
+    if (isEditing) {
+      updateRecipe(id, recipeData);
+    } else {
+      addRecipe(recipeData);
+    }
     router.back();
   };
 
   return (
-    <ScrollView
-      style={{ backgroundColor: colors.background }}
-      contentContainerStyle={styles.container}
-    >
-      <TextInput
-        placeholder="레시피 이름 *"
-        value={title}
-        onChangeText={setTitle}
-        placeholderTextColor={colors.secondaryText}
-        style={[
-          styles.input,
-          {
-            backgroundColor: colors.card,
-            borderColor: colors.border,
-            color: colors.text,
-          },
-        ]}
+    <>
+      <Stack.Screen
+        options={{ title: isEditing ? "레시피 수정" : "레시피 추가" }}
       />
-      <TextInput
-        placeholder="카테고리 *"
-        value={category}
-        onChangeText={setCategory}
-        placeholderTextColor={colors.secondaryText}
-        style={[
-          styles.input,
-          {
-            backgroundColor: colors.card,
-            borderColor: colors.border,
-            color: colors.text,
-          },
-        ]}
-      />
-      <TextInput
-        placeholder="레시피 설명"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-        placeholderTextColor={colors.secondaryText}
-        style={[
-          styles.input,
-          styles.multiline,
-          {
-            backgroundColor: colors.card,
-            borderColor: colors.border,
-            color: colors.text,
-          },
-        ]}
-      />
-      <View style={styles.imageButtonRow}>
-        <Pressable
-          onPress={pickImage}
+      <ScrollView
+        style={{ backgroundColor: colors.background }}
+        contentContainerStyle={styles.container}
+      >
+        <TextInput
+          placeholder="레시피 이름 *"
+          value={title}
+          onChangeText={setTitle}
+          placeholderTextColor={colors.secondaryText}
           style={[
-            styles.imageButton,
-            { backgroundColor: colors.card, borderColor: colors.border },
+            styles.input,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              color: colors.text,
+            },
           ]}
-        >
-          <Text style={{ color: colors.text }}>갤러리에서 선택</Text>
-        </Pressable>
-        <Pressable
-          onPress={takePhoto}
+        />
+        <TextInput
+          placeholder="카테고리 *"
+          value={category}
+          onChangeText={setCategory}
+          placeholderTextColor={colors.secondaryText}
           style={[
-            styles.imageButton,
-            { backgroundColor: colors.card, borderColor: colors.border },
+            styles.input,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              color: colors.text,
+            },
           ]}
-        >
-          <Text style={{ color: colors.text }}>사진 촬영</Text>
+        />
+        <TextInput
+          placeholder="레시피 설명"
+          value={description}
+          onChangeText={setDescription}
+          multiline
+          placeholderTextColor={colors.secondaryText}
+          style={[
+            styles.input,
+            styles.multiline,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              color: colors.text,
+            },
+          ]}
+        />
+        <View style={styles.imageButtonRow}>
+          <Pressable
+            onPress={pickImage}
+            style={[
+              styles.imageButton,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
+          >
+            <Text style={{ color: colors.text }}>갤러리에서 선택</Text>
+          </Pressable>
+          <Pressable
+            onPress={takePhoto}
+            style={[
+              styles.imageButton,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
+          >
+            <Text style={{ color: colors.text }}>사진 촬영</Text>
+          </Pressable>
+        </View>
+        {image && (
+          <Image source={{ uri: getImageUri(image) }} style={styles.image} />
+        )}
+        <Pressable onPress={handleSave} style={styles.button}>
+          <Text style={styles.buttonText}>
+            {isEditing ? "수정 완료" : "추가하기"}
+          </Text>
         </Pressable>
-      </View>
-      {image && (
-        <Image source={{ uri: getImageUri(image) }} style={styles.image} />
-      )}
-      <Pressable onPress={handleSave} style={styles.button}>
-        <Text style={styles.buttonText}>추가하기</Text>
-      </Pressable>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 }
 

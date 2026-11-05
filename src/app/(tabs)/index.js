@@ -2,6 +2,7 @@ import { useContext, useMemo, useState } from "react";
 import { router } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import {
+  Alert,
   FlatList,
   Pressable,
   StyleSheet,
@@ -17,7 +18,8 @@ import { useThemeColors } from "../../../utils/theme";
 const getCategory = (recipe) => recipe.category.split(" · ")[0];
 
 export default function ListScreen() {
-  const { recipeList, favoriteIds, toggleFavorite } = useContext(RecipeContext);
+  const { recipeList, favoriteIds, toggleFavorite, deleteAllRecipes } =
+    useContext(RecipeContext);
   const colors = useThemeColors();
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("전체");
@@ -35,6 +37,25 @@ export default function ListScreen() {
 
     return matchesQuery && matchesCategory;
   });
+
+  const handleDeleteAll = () => {
+    Alert.alert(
+      "레시피 일괄 삭제",
+      `저장된 레시피 ${recipeList.length}개를 모두 삭제할까요? 이 작업은 되돌릴 수 없습니다.`,
+      [
+        { text: "취소", style: "cancel" },
+        {
+          text: "전체 삭제",
+          style: "destructive",
+          onPress: () => {
+            deleteAllRecipes();
+            setQuery("");
+            setSelectedCategory("전체");
+          },
+        },
+      ],
+    );
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -104,6 +125,20 @@ export default function ListScreen() {
         }
         ListEmptyComponent={
           <Text style={{ color: colors.text }}>검색 결과가 없습니다.</Text>
+        }
+        ListFooterComponent={
+          <Pressable
+            disabled={recipeList.length === 0}
+            onPress={handleDeleteAll}
+            style={[
+              styles.deleteAllButton,
+              { borderColor: colors.border },
+              recipeList.length === 0 && styles.disabledButton,
+            ]}
+          >
+            <Feather name="trash-2" size={19} color="#D14343" />
+            <Text style={styles.deleteAllButtonText}>일괄 삭제</Text>
+          </Pressable>
         }
         style={[styles.list, { backgroundColor: colors.background }]}
         contentContainerStyle={styles.scrollContent}
@@ -182,4 +217,16 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 6,
   },
+  deleteAllButton: {
+    minHeight: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 18,
+    borderWidth: 1,
+    borderRadius: 10,
+  },
+  deleteAllButtonText: { color: "#D14343", fontSize: 15, fontWeight: "700" },
+  disabledButton: { opacity: 0.4 },
 });

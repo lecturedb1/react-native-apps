@@ -52,6 +52,28 @@ export function RecipeProvider({ children }) {
     });
   }, []);
 
+  const updateRecipe = useCallback((id, updatedRecipe) => {
+    setRecipeList((current) =>
+      current.map((recipe) =>
+        recipe.id === id ? { ...recipe, ...updatedRecipe, id } : recipe,
+      ),
+    );
+  }, []);
+
+  const deleteRecipe = useCallback((id) => {
+    setRecipeList((current) =>
+      current.filter((recipe) => recipe.id !== id),
+    );
+    setFavoriteIds((current) =>
+      current.filter((favoriteId) => favoriteId !== id),
+    );
+  }, []);
+
+  const deleteAllRecipes = useCallback(() => {
+    setRecipeList([]);
+    setFavoriteIds([]);
+  }, []);
+
   const toggleFavorite = (id) => {
     setFavoriteIds((current) =>
       current.includes(id)
@@ -62,7 +84,15 @@ export function RecipeProvider({ children }) {
 
   return (
     <RecipeContext.Provider
-      value={{ recipeList, favoriteIds, addRecipe, toggleFavorite }}
+      value={{
+        recipeList,
+        favoriteIds,
+        addRecipe,
+        updateRecipe,
+        deleteRecipe,
+        deleteAllRecipes,
+        toggleFavorite,
+      }}
     >
       {children}
     </RecipeContext.Provider>
