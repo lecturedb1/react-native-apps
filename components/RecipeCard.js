@@ -1,5 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { useRef } from "react";
+import { Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { getImageUri } from "../utils/imageStorage";
 import { useThemeColors } from "../utils/theme";
@@ -11,12 +12,49 @@ export default function RecipeCard({
   onToggleFavorite,
 }) {
   const colors = useThemeColors();
+  const heartScale = useRef(new Animated.Value(1)).current;
+  const cardScale = useRef(new Animated.Value(1)).current;
+
+  const animateCard = (toValue) => {
+    Animated.spring(cardScale, {
+      toValue,
+      speed: 30,
+      bounciness: 0,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleToggleFavorite = () => {
+    onToggleFavorite();
+    Animated.sequence([
+      Animated.spring(heartScale, {
+        toValue: 1.2,
+        speed: 30,
+        bounciness: 6,
+        useNativeDriver: true,
+      }),
+      Animated.spring(heartScale, {
+        toValue: 1,
+        speed: 50,
+        bounciness: 0,
+        overshootClamping: true,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.card }]}>
+    <Animated.View
+      style={[
+        styles.card,
+        { backgroundColor: colors.card, transform: [{ scale: cardScale }] },
+      ]}
+    >
       <Pressable
         style={styles.content}
         onPress={onPress}
+        onPressIn={() => animateCard(1.02)}
+        onPressOut={() => animateCard(1)}
       >
         <Image source={{ uri: getImageUri(recipe.image) }} style={styles.image} />
 
@@ -37,16 +75,18 @@ export default function RecipeCard({
       </Pressable>
 
       <Pressable
-        onPress={onToggleFavorite}
+        onPress={handleToggleFavorite}
         style={styles.favoriteButton}
       >
-        <FontAwesome
-          name={isFavorite ? "heart" : "heart-o"}
-          size={24}
-          color={isFavorite ? "#E53935" : "#777"}
-        />
+        <Animated.View style={{ transform: [{ scale: heartScale }] }}>
+          <FontAwesome
+            name={isFavorite ? "heart" : "heart-o"}
+            size={24}
+            color={isFavorite ? "#E53935" : "#777"}
+          />
+        </Animated.View>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }
 

@@ -1,14 +1,47 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef } from "react";
+import { Animated, StyleSheet, Text, View } from "react-native";
 
 import { getImageUri } from "../utils/imageStorage";
 import { useThemeColors } from "../utils/theme";
 
 export default function RecipeDetail({ recipe }) {
   const colors = useThemeColors();
+  const imageAnimation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    imageAnimation.setValue(0);
+    Animated.timing(imageAnimation, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, [imageAnimation, recipe.id]);
 
   return (
     <>
-      <Image source={{ uri: getImageUri(recipe.image) }} style={styles.image} />
+      <Animated.Image
+        source={{ uri: getImageUri(recipe.image) }}
+        style={[
+          styles.image,
+          {
+            opacity: imageAnimation,
+            transform: [
+              {
+                translateY: imageAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [30, 0],
+                }),
+              },
+              {
+                scale: imageAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.9, 1],
+                }),
+              },
+            ],
+          },
+        ]}
+      />
       <Text style={[styles.category, { color: colors.secondaryText }]}>
         {recipe.category} · {recipe.cookingTime}분
       </Text>
