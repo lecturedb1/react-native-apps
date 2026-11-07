@@ -2,9 +2,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { Appearance } from "react-native";
 import { Stack } from "expo-router";
+import * as Notifications from "expo-notifications";
 
 import { RecipeProvider } from "../../context/RecipeContext";
 import { useThemeColors } from "../../utils/theme";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function RootLayout() {
   const colors = useThemeColors();

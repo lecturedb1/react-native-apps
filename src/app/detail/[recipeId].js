@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { router, useLocalSearchParams } from "expo-router";
+import * as Notifications from "expo-notifications";
 import Feather from "@expo/vector-icons/Feather";
 import {
   Alert,
@@ -19,6 +20,40 @@ export default function DetailScreen() {
   const { recipeList, deleteRecipe } = useContext(RecipeContext);
   const colors = useThemeColors();
   const recipe = recipeList.find((item) => item.id === Number(recipeId));
+
+  const handleStartCooking = async () => {
+    await Notifications.setNotificationChannelAsync("cooking", {
+      name: "조리 알림",
+      importance: Notifications.AndroidImportance.HIGH,
+      sound: "default",
+    });
+
+    const permission = await Notifications.requestPermissionsAsync();
+    const isGranted =
+      permission.granted ||
+      permission.ios?.status ===
+        Notifications.IosAuthorizationStatus.PROVISIONAL;
+
+    if (!isGranted) {
+      Alert.alert("권한 필요", "조리 완료 알림을 받으려면 알림 권한이 필요합니다.");
+      return;
+    }
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "요리가 완성됐어요!",
+        body: `${recipe.title}의 조리시간이 끝났습니다.`,
+        sound: "default",
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: recipe.cookingTime * 60,
+        channelId: "cooking",
+      },
+    });
+
+    Alert.alert("요리 시작", `${recipe.cookingTime}분 후에 알려드릴게요.`);
+  };
 
   const handleDelete = () => {
     Alert.alert(
@@ -58,6 +93,13 @@ export default function DetailScreen() {
     >
       <RecipeDetail recipe={recipe} />
       <View style={styles.actionRow}>
+        <Pressable
+          onPress={handleStartCooking}
+          style={[styles.actionButton, styles.startButton]}
+        >
+          <Feather name="play" size={20} color="white" />
+          <Text style={styles.actionText}>요리 시작</Text>
+        </Pressable>
         <Pressable
           onPress={handleDelete}
           style={[styles.actionButton, styles.deleteButton]}
@@ -110,6 +152,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     borderRadius: 24,
   },
+  startButton: { marginRight: "auto", backgroundColor: "#2F855A" },
   deleteButton: { backgroundColor: "#D14343" },
   editButton: { backgroundColor: "#111" },
   actionText: { color: "white", fontSize: 15, fontWeight: "700" },

@@ -17,8 +17,17 @@ import { RecipeContext } from "../../context/RecipeContext";
 import { getImageUri, saveImage } from "../../utils/imageStorage";
 import { useThemeColors } from "../../utils/theme";
 
-const categories = ["양식", "샐러드", "디저트", "음료"];
-const cookingTimes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+const categories = [
+  "양식",
+  "샐러드",
+  "디저트",
+  "음료",
+  "한식",
+  "중식",
+  "일식",
+  "기타",
+];
+const cookingTimes = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
 
 export default function AddScreen() {
   const { recipeList, addRecipe, updateRecipe } = useContext(RecipeContext);
