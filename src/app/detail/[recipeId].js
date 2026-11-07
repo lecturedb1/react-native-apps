@@ -1,14 +1,17 @@
 import { useContext } from "react";
 import { router, useLocalSearchParams } from "expo-router";
+import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import Feather from "@expo/vector-icons/Feather";
 import {
   Alert,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
+  Platform,
 } from "react-native";
 
 import RecipeDetail from "../../../components/RecipeDetail";
@@ -35,7 +38,10 @@ export default function DetailScreen() {
         Notifications.IosAuthorizationStatus.PROVISIONAL;
 
     if (!isGranted) {
-      Alert.alert("권한 필요", "조리 완료 알림을 받으려면 알림 권한이 필요합니다.");
+      Alert.alert(
+        "권한 필요",
+        "조리 완료 알림을 받으려면 알림 권한이 필요합니다.",
+      );
       return;
     }
 
@@ -55,22 +61,53 @@ export default function DetailScreen() {
     Alert.alert("요리 시작", `${recipe.cookingTime}분 후에 알려드릴게요.`);
   };
 
+  const handleFindMarket = async () => {
+    try {
+      const permission = await Location.requestForegroundPermissionsAsync();
+
+      if (!permission.granted) {
+        Alert.alert(
+          "권한 필요",
+          "주변 마트를 찾으려면 위치 권한이 필요합니다.",
+        );
+        return;
+      }
+
+      const { coords } = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      const query = encodeURIComponent("마트");
+      const position = `${coords.latitude},${coords.longitude}`;
+
+      const googleMapsUrl =
+        Platform.OS === "ios"
+          ? `comgooglemaps://?q=${query}&center=${position}`
+          : `geo:${position}?q=${query}`;
+
+      try {
+        await Linking.openURL(googleMapsUrl);
+      } catch {
+        await Linking.openURL(
+          `https://www.google.com/maps/search/?api=1&query=${query}`,
+        );
+      }
+    } catch {
+      Alert.alert("위치 확인 실패", "현재 위치를 확인할 수 없습니다.");
+    }
+  };
+
   const handleDelete = () => {
-    Alert.alert(
-      "레시피 삭제",
-      `‘${recipe.title}’ 레시피를 삭제할까요?`,
-      [
-        { text: "취소", style: "cancel" },
-        {
-          text: "삭제",
-          style: "destructive",
-          onPress: () => {
-            router.back();
-            deleteRecipe(recipe.id);
-          },
+    Alert.alert("레시피 삭제", `‘${recipe.title}’ 레시피를 삭제할까요?`, [
+      { text: "취소", style: "cancel" },
+      {
+        text: "삭제",
+        style: "destructive",
+        onPress: () => {
+          router.back();
+          deleteRecipe(recipe.id);
         },
-      ],
-    );
+      },
+    ]);
   };
 
   if (!recipe) {
@@ -93,13 +130,22 @@ export default function DetailScreen() {
     >
       <RecipeDetail recipe={recipe} />
       <View style={styles.actionRow}>
-        <Pressable
-          onPress={handleStartCooking}
-          style={[styles.actionButton, styles.startButton]}
-        >
-          <Feather name="play" size={20} color="white" />
-          <Text style={styles.actionText}>요리 시작</Text>
-        </Pressable>
+        <View style={styles.primaryActions}>
+          <Pressable
+            onPress={handleStartCooking}
+            style={[styles.actionButton, styles.startButton]}
+          >
+            <Feather name="play" size={20} color="white" />
+            <Text style={styles.actionText}>요리 시작</Text>
+          </Pressable>
+          <Pressable
+            onPress={handleFindMarket}
+            style={[styles.actionButton, styles.marketButton]}
+          >
+            <Feather name="map-pin" size={20} color="white" />
+            <Text style={styles.actionText}>마트 찾기</Text>
+          </Pressable>
+        </View>
         <Pressable
           onPress={handleDelete}
           style={[styles.actionButton, styles.deleteButton]}
@@ -139,6 +185,7 @@ const styles = StyleSheet.create({
   },
   actionRow: {
     flexDirection: "row",
+    alignItems: "flex-end",
     justifyContent: "flex-end",
     gap: 10,
     marginTop: 24,
@@ -152,7 +199,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     borderRadius: 24,
   },
-  startButton: { marginRight: "auto", backgroundColor: "#2F855A" },
+  primaryActions: { marginRight: "auto", gap: 10 },
+  startButton: { backgroundColor: "#2F855A" },
+  marketButton: { backgroundColor: "#3182CE" },
   deleteButton: { backgroundColor: "#D14343" },
   editButton: { backgroundColor: "#111" },
   actionText: { color: "white", fontSize: 15, fontWeight: "700" },
