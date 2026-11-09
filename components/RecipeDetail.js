@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { Animated, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { getImageUri } from "../utils/imageStorage";
 import { useThemeColors } from "../utils/theme";
@@ -7,6 +7,28 @@ import { useThemeColors } from "../utils/theme";
 export default function RecipeDetail({ recipe }) {
   const colors = useThemeColors();
   const imageAnimation = useRef(new Animated.Value(0)).current;
+  const [recipeIntro, setRecipeIntro] = useState(
+    "이곳에 레시피 상세 내용이 표시됩니다.",
+  );
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleCreateRecipe = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("http://10.91.32.186:3000/api/hello");
+
+      if (!response.ok) {
+        throw new Error();
+      }
+
+      const data = await response.json();
+      setRecipeIntro(data.message ?? JSON.stringify(data));
+    } catch {
+      setRecipeIntro("레시피를 불러오지 못했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     imageAnimation.setValue(0);
@@ -51,12 +73,21 @@ export default function RecipeDetail({ recipe }) {
       </Text>
 
       <View style={[styles.detailBox, { backgroundColor: colors.card }]}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          레시피 소개
-        </Text>
-        <Text style={{ color: colors.text }}>
-          이곳에 레시피 상세 내용이 표시됩니다.
-        </Text>
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            레시피 소개
+          </Text>
+          <Pressable
+            disabled={isLoading}
+            onPress={handleCreateRecipe}
+            style={[styles.createButton, isLoading && styles.disabledButton]}
+          >
+            <Text style={styles.createButtonText}>
+              {isLoading ? "생성 중..." : "레시피 생성"}
+            </Text>
+          </Pressable>
+        </View>
+        <Text style={{ color: colors.text }}>{recipeIntro}</Text>
       </View>
     </>
   );
@@ -88,9 +119,22 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     marginTop: 24,
   },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 14,
+  },
   sectionTitle: {
     fontSize: 19,
     fontWeight: "bold",
-    marginBottom: 14,
   },
+  createButton: {
+    backgroundColor: "#3182CE",
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 18,
+  },
+  disabledButton: { opacity: 0.6 },
+  createButtonText: { color: "white", fontWeight: "700" },
 });
