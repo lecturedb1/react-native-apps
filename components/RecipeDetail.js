@@ -15,7 +15,19 @@ export default function RecipeDetail({ recipe }) {
   const handleCreateRecipe = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("http://10.91.32.186:3000/api/hello");
+      const response = await fetch(
+        "https://recipe-api-vert.vercel.app/api/hello",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: recipe.title,
+            category: recipe.category,
+            cookingTime: recipe.cookingTime,
+            description: recipe.description,
+          }),
+        },
+      );
 
       if (!response.ok) {
         throw new Error();
