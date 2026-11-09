@@ -1,14 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { RecipeContext } from "../context/RecipeContext";
 import { getImageUri } from "../utils/imageStorage";
 import { useThemeColors } from "../utils/theme";
 
 export default function RecipeDetail({ recipe }) {
   const colors = useThemeColors();
+  const { updateRecipe } = useContext(RecipeContext);
   const imageAnimation = useRef(new Animated.Value(0)).current;
   const [recipeIntro, setRecipeIntro] = useState(
-    "이곳에 레시피 상세 내용이 표시됩니다.",
+    recipe.generatedRecipe ?? "이곳에 레시피 상세 내용이 표시됩니다.",
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,7 +18,7 @@ export default function RecipeDetail({ recipe }) {
     try {
       setIsLoading(true);
       const response = await fetch(
-        "https://recipe-api-vert.vercel.app/api/hello",
+        "https://recipe-api-vert.vercel.app/api/recipe",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -34,7 +36,9 @@ export default function RecipeDetail({ recipe }) {
       }
 
       const data = await response.json();
-      setRecipeIntro(data.message ?? JSON.stringify(data));
+      const generatedRecipe = data.message ?? JSON.stringify(data);
+      setRecipeIntro(generatedRecipe);
+      updateRecipe(recipe.id, { generatedRecipe });
     } catch {
       setRecipeIntro("레시피를 불러오지 못했습니다.");
     } finally {
