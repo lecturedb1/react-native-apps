@@ -56,7 +56,14 @@ export default function RecipeCard({
         onPressIn={() => animateCard(1.02)}
         onPressOut={() => animateCard(1)}
       >
-        <Image source={{ uri: getImageUri(recipe.image) }} style={styles.image} />
+        {recipe.image ? (
+          <Image
+            source={{ uri: getImageUri(recipe.image) }}
+            style={styles.image}
+          />
+        ) : (
+          <View style={[styles.image, { backgroundColor: colors.chip }]} />
+        )}
 
         <View style={styles.info}>
           <Text style={[styles.category, { color: colors.secondaryText }]}>

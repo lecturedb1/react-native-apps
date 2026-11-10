@@ -3,6 +3,7 @@ import * as Crypto from "expo-crypto";
 import { createContext, useCallback, useEffect, useState } from "react";
 
 import recipes from "../data/recipes";
+import { deleteImage } from "../utils/imageStorage";
 
 const RECIPE_KEY = "recipeList";
 const FAVORITE_KEY = "favoriteIds";
@@ -62,18 +63,21 @@ export function RecipeProvider({ children }) {
   }, []);
 
   const deleteRecipe = useCallback((id) => {
+    const recipe = recipeList.find((item) => item.id === id);
+    deleteImage(recipe?.image);
     setRecipeList((current) =>
       current.filter((recipe) => recipe.id !== id),
     );
     setFavoriteIds((current) =>
       current.filter((favoriteId) => favoriteId !== id),
     );
-  }, []);
+  }, [recipeList]);
 
   const deleteAllRecipes = useCallback(() => {
+    recipeList.forEach((recipe) => deleteImage(recipe.image));
     setRecipeList([]);
     setFavoriteIds([]);
-  }, []);
+  }, [recipeList]);
 
   const toggleFavorite = (id) => {
     setFavoriteIds((current) =>

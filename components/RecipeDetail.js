@@ -57,29 +57,33 @@ export default function RecipeDetail({ recipe }) {
 
   return (
     <>
-      <Animated.Image
-        source={{ uri: getImageUri(recipe.image) }}
-        style={[
-          styles.image,
-          {
-            opacity: imageAnimation,
-            transform: [
-              {
-                translateY: imageAnimation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [30, 0],
-                }),
-              },
-              {
-                scale: imageAnimation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.9, 1],
-                }),
-              },
-            ],
-          },
-        ]}
-      />
+      {recipe.image ? (
+        <Animated.Image
+          source={{ uri: getImageUri(recipe.image) }}
+          style={[
+            styles.image,
+            {
+              opacity: imageAnimation,
+              transform: [
+                {
+                  translateY: imageAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [30, 0],
+                  }),
+                },
+                {
+                  scale: imageAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.9, 1],
+                  }),
+                },
+              ],
+            },
+          ]}
+        />
+      ) : (
+        <View style={[styles.image, { backgroundColor: colors.card }]} />
+      )}
       <Text style={[styles.category, { color: colors.secondaryText }]}>
         {recipe.category} · {recipe.cookingTime}분
       </Text>

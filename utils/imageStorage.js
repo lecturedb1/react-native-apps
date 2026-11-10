@@ -16,3 +16,10 @@ export async function saveImage(uri) {
 export function getImageUri(image) {
   return image.startsWith("http") ? image : new File(imageDirectory, image).uri;
 }
+
+export function deleteImage(image) {
+  if (!image || image.startsWith("http")) return;
+
+  const file = new File(imageDirectory, image);
+  if (file.exists) file.delete();
+}

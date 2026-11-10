@@ -74,8 +74,8 @@ export default function AddScreen() {
   };
 
   const handleSave = () => {
-    if (!title.trim() || !image.trim()) {
-      Alert.alert("입력 확인", "필수 항목을 입력해주세요.");
+    if (!title.trim()) {
+      Alert.alert("입력 확인", "레시피 이름을 입력해주세요.");
       return;
     }
 
