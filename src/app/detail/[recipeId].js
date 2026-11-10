@@ -22,7 +22,7 @@ export default function DetailScreen() {
   const { recipeId } = useLocalSearchParams();
   const { recipeList, deleteRecipe } = useContext(RecipeContext);
   const colors = useThemeColors();
-  const recipe = recipeList.find((item) => item.id === Number(recipeId));
+  const recipe = recipeList.find((item) => item.id === recipeId);
 
   const handleStartCooking = async () => {
     await Notifications.setNotificationChannelAsync("cooking", {

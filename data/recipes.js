@@ -1,6 +1,6 @@
 const recipes = [
   {
-    id: 1,
+    id: "4739114b-ea71-4d8d-8696-8ac5d43d2e00",
     title: "토마토 파스타",
     category: "양식",
     cookingTime: 25,
@@ -8,7 +8,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400",
   },
   {
-    id: 2,
+    id: "44f6c0ba-b8c9-4bda-86af-3d74bb89d07d",
     title: "그린 샐러드",
     category: "샐러드",
     cookingTime: 10,
@@ -16,7 +16,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400",
   },
   {
-    id: 3,
+    id: "e40fc304-065a-43b0-9bd9-52de943bcde3",
     title: "마르게리타 피자",
     category: "양식",
     cookingTime: 40,
@@ -24,7 +24,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400",
   },
   {
-    id: 4,
+    id: "0fcf2028-bd65-4d5a-887b-742055328bb8",
     title: "브런치 팬케이크",
     category: "디저트",
     cookingTime: 20,
@@ -32,7 +32,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=400",
   },
   {
-    id: 5,
+    id: "23bc8af0-977b-4978-a5c9-9357fe93fd5d",
     title: "수제 치즈버거",
     category: "양식",
     cookingTime: 30,
@@ -40,7 +40,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400",
   },
   {
-    id: 6,
+    id: "ae7a2e0f-3159-456a-b155-4ba303b96fc6",
     title: "건강한 포케 볼",
     category: "샐러드",
     cookingTime: 15,
@@ -48,7 +48,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
   },
   {
-    id: 7,
+    id: "28ee6ba3-a4a7-4264-940e-3f27e4b519dd",
     title: "치즈 케이크",
     category: "디저트",
     cookingTime: 50,
@@ -56,7 +56,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=400",
   },
   {
-    id: 8,
+    id: "2743776f-4d79-4b69-9ee6-9c633689ac1a",
     title: "아이스 라떼",
     category: "음료",
     cookingTime: 5,
@@ -64,7 +64,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400",
   },
   {
-    id: 9,
+    id: "403dd0d9-2c28-446c-9a43-e2389e99b5e3",
     title: "버섯 크림 리조또",
     category: "양식",
     cookingTime: 35,
@@ -72,7 +72,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400",
   },
   {
-    id: 10,
+    id: "ce289456-f2c8-41a5-9361-e7fd9b88aaad",
     title: "아보카도 샐러드",
     category: "샐러드",
     cookingTime: 10,
@@ -80,7 +80,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400",
   },
   {
-    id: 11,
+    id: "368b5bbb-c0ad-4e9d-9fff-7d43b1e858ea",
     title: "초콜릿 케이크",
     category: "디저트",
     cookingTime: 60,
@@ -88,7 +88,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400",
   },
   {
-    id: 12,
+    id: "14a17c83-2500-4247-b1b9-df4aba2782ce",
     title: "딸기 스무디",
     category: "음료",
     cookingTime: 5,
@@ -96,7 +96,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=400",
   },
   {
-    id: 13,
+    id: "d46d8495-4b0c-43e7-beb0-f62df8350493",
     title: "연어 스테이크",
     category: "양식",
     cookingTime: 30,
@@ -104,7 +104,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400",
   },
   {
-    id: 14,
+    id: "675a7de5-442c-49ec-8927-012cdb90da04",
     title: "시저 샐러드",
     category: "샐러드",
     cookingTime: 15,
@@ -112,7 +112,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400",
   },
   {
-    id: 15,
+    id: "c3f88692-929a-4cd5-8bbe-48bd2e4ec8b7",
     title: "프렌치 토스트",
     category: "디저트",
     cookingTime: 20,
@@ -120,7 +120,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=400",
   },
   {
-    id: 16,
+    id: "390967f6-ccb2-40a4-b6de-88171c805949",
     title: "레몬 에이드",
     category: "음료",
     cookingTime: 5,
@@ -128,7 +128,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1523362628745-0c100150b504?w=400",
   },
   {
-    id: 17,
+    id: "146ed074-59f2-4d1a-8081-c6c8596f293d",
     title: "버섯 크림 수프",
     category: "양식",
     cookingTime: 25,
@@ -136,7 +136,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400",
   },
   {
-    id: 18,
+    id: "dc4db61c-6a26-4ce3-8db2-31d10e537aec",
     title: "병아리콩 샐러드",
     category: "샐러드",
     cookingTime: 15,
@@ -144,7 +144,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1547592180-85f173990554?w=400",
   },
   {
-    id: 19,
+    id: "8fe61f73-9098-4d73-85de-4d4b08335c22",
     title: "초코칩 쿠키",
     category: "디저트",
     cookingTime: 35,
@@ -152,7 +152,7 @@ const recipes = [
     image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400",
   },
   {
-    id: 20,
+    id: "e7032b3b-0744-40fe-b976-a379f6d3f121",
     title: "망고 주스",
     category: "음료",
     cookingTime: 5,

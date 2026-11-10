@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Crypto from "expo-crypto";
 import { createContext, useCallback, useEffect, useState } from "react";
 
 import recipes from "../data/recipes";
@@ -47,7 +48,7 @@ export function RecipeProvider({ children }) {
 
   const addRecipe = useCallback((newRecipe) => {
     setRecipeList((current) => {
-      const id = Math.max(...current.map((recipe) => recipe.id), 0) + 1;
+      const id = Crypto.randomUUID();
       return [...current, { ...newRecipe, id }];
     });
   }, []);
