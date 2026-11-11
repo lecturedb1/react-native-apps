@@ -1,4 +1,9 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import { fetch as expoFetch } from "expo/fetch";
+import { File } from "expo-file-system";
+import Feather from "@expo/vector-icons/Feather";
+import { Alert } from "react-native";
+import { ActivityIndicator } from "react-native";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { RecipeContext } from "../context/RecipeContext";
@@ -13,6 +18,7 @@ export default function RecipeDetail({ recipe }) {
     recipe.generatedRecipe ?? "이곳에 레시피 상세 내용이 표시됩니다.",
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
 
   const handleCreateRecipe = async () => {
     try {
@@ -43,6 +49,40 @@ export default function RecipeDetail({ recipe }) {
       setRecipeIntro("레시피를 불러오지 못했습니다.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!recipe.image) {
+      Alert.alert("이미지 필요", "공유하려면 먼저 요리 이미지를 추가해주세요.");
+      return;
+    }
+
+    try {
+      setIsSharing(true);
+      const imageUri = getImageUri(recipe.image);
+      const formData = new FormData();
+      formData.append("recipe", JSON.stringify(recipe));
+      formData.append("image", new File(imageUri));
+
+      const response = await expoFetch(
+        "https://recipe-api-vert.vercel.app/api/upload",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`${response.status}: ${await response.text()}`);
+      }
+
+      updateRecipe(recipe.id, { isShared: true });
+      Alert.alert("공유 완료", "레시피가 클라우드에 업로드됐습니다.");
+    } catch (error) {
+      Alert.alert("공유 실패", error.message);
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -84,6 +124,25 @@ export default function RecipeDetail({ recipe }) {
       ) : (
         <View style={[styles.image, { backgroundColor: colors.card }]} />
       )}
+      <Pressable
+        disabled={isSharing}
+        onPress={handleShare}
+        style={[
+          styles.shareButton,
+          recipe.isShared && styles.sharedButton,
+          isSharing && styles.disabledButton,
+        ]}
+      >
+        {isSharing ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Feather
+            name={recipe.isShared ? "check" : "share-2"}
+            size={21}
+            color="white"
+          />
+        )}
+      </Pressable>
       <Text style={[styles.category, { color: colors.secondaryText }]}>
         {recipe.category} · {recipe.cookingTime}분
       </Text>
@@ -119,6 +178,20 @@ const styles = StyleSheet.create({
     height: 230,
     borderRadius: 14,
     marginBottom: 20,
+  },
+  shareButton: {
+    position: "absolute",
+    right: 28,
+    top: 190,
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 22,
+    backgroundColor: "rgba(17, 17, 17, 0.8)",
+  },
+  sharedButton: {
+    backgroundColor: "#2F855A",
   },
   category: {
     fontSize: 12,
