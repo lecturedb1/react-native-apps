@@ -38,6 +38,15 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="shared"
+        options={{
+          title: "Shared",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="cloud" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",
