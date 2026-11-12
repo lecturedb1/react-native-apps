@@ -49,7 +49,8 @@ export function RecipeProvider({ children }) {
 
   const addRecipe = useCallback((newRecipe) => {
     setRecipeList((current) => {
-      const id = Crypto.randomUUID();
+      const id = newRecipe.id ?? Crypto.randomUUID();
+      if (current.some((recipe) => recipe.id === id)) return current;
       return [...current, { ...newRecipe, id }];
     });
   }, []);

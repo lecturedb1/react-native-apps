@@ -125,10 +125,11 @@ export default function RecipeDetail({ recipe }) {
         <View style={[styles.image, { backgroundColor: colors.card }]} />
       )}
       <Pressable
-        disabled={isSharing}
+        disabled={isSharing || recipe.isDownloaded}
         onPress={handleShare}
         style={[
           styles.shareButton,
+          recipe.isDownloaded && { display: "none" },
           recipe.isShared && styles.sharedButton,
           isSharing && styles.disabledButton,
         ]}
@@ -157,9 +158,13 @@ export default function RecipeDetail({ recipe }) {
             레시피 소개
           </Text>
           <Pressable
-            disabled={isLoading}
+            disabled={isLoading || recipe.isDownloaded}
             onPress={handleCreateRecipe}
-            style={[styles.createButton, isLoading && styles.disabledButton]}
+            style={[
+              styles.createButton,
+              recipe.isDownloaded && { display: "none" },
+              isLoading && styles.disabledButton,
+            ]}
           >
             <Text style={styles.createButtonText}>
               {isLoading ? "생성 중..." : "레시피 생성"}
