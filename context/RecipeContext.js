@@ -4,6 +4,7 @@ import { createContext, useCallback, useEffect, useState } from "react";
 
 import recipes from "../data/recipes";
 import { deleteImage } from "../utils/imageStorage";
+import FavoritesWidget from "../widgets/FavoritesWidget";
 
 const RECIPE_KEY = "recipeList";
 const FAVORITE_KEY = "favoriteIds";
@@ -31,6 +32,14 @@ export function RecipeProvider({ children }) {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    FavoritesWidget.updateSnapshot({
+      count: favoriteIds.length,
+    });
+  }, [favoriteIds, isLoaded]);
 
   useEffect(() => {
     if (!isLoaded) return;
