@@ -1,13 +1,12 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { fetch as expoFetch } from "expo/fetch";
-import { File } from "expo-file-system";
 import Feather from "@expo/vector-icons/Feather";
 import { Alert } from "react-native";
 import { ActivityIndicator } from "react-native";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { RecipeContext } from "../context/RecipeContext";
-import { getImageUri } from "../utils/imageStorage";
+import { createUploadFile, getImageUri } from "../utils/imageStorage";
 import { useThemeColors } from "../utils/theme";
 
 export default function RecipeDetail({ recipe }) {
@@ -63,7 +62,7 @@ export default function RecipeDetail({ recipe }) {
       const imageUri = getImageUri(recipe.image);
       const formData = new FormData();
       formData.append("recipe", JSON.stringify(recipe));
-      formData.append("image", new File(imageUri));
+      formData.append("image", await createUploadFile(imageUri));
 
       const response = await expoFetch(
         "https://recipe-api-vert.vercel.app/api/upload",

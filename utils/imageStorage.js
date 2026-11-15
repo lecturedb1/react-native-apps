@@ -23,3 +23,7 @@ export function deleteImage(image) {
   const file = new File(imageDirectory, image);
   if (file.exists) file.delete();
 }
+
+export function createUploadFile(uri) {
+  return new File(uri);
+}
