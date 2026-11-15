@@ -79,6 +79,13 @@ export default function DetailScreen() {
       const query = encodeURIComponent("마트");
       const position = `${coords.latitude},${coords.longitude}`;
 
+      if (Platform.OS === "web") {
+        await Linking.openURL(
+          `https://www.google.com/maps/search/?api=1&query=${query}&center=${position}`,
+        );
+        return;
+      }
+
       const googleMapsUrl =
         Platform.OS === "ios"
           ? `comgooglemaps://?q=${query}&center=${position}`
