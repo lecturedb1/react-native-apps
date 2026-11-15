@@ -1,7 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect } from "react";
 import {
-  Appearance,
   Platform,
   StyleSheet,
   View,
@@ -11,7 +8,7 @@ import { Stack } from "expo-router";
 import * as Notifications from "expo-notifications";
 
 import { RecipeProvider } from "../../context/RecipeContext";
-import { useThemeColors } from "../../utils/theme";
+import { ThemeProvider, useThemeColors } from "../../utils/theme";
 
 if (Platform.OS !== "web") {
   Notifications.setNotificationHandler({
@@ -25,22 +22,17 @@ if (Platform.OS !== "web") {
 }
 
 export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <RootNavigator />
+    </ThemeProvider>
+  );
+}
+
+function RootNavigator() {
   const colors = useThemeColors();
   const { width, height } = useWindowDimensions();
   const showPhoneFrame = Platform.OS === "web" && width >= 768;
-
-  useEffect(() => {
-    if (Platform.OS === "web") return;
-
-    AsyncStorage.getItem("themeMode")
-      .then((savedTheme) => {
-        const mode = ["light", "dark", "auto"].includes(savedTheme)
-          ? savedTheme
-          : "auto";
-        Appearance.setColorScheme(mode);
-      })
-      .catch((error) => console.error("테마 복원 실패", error));
-  }, []);
 
   const app = (
     <RecipeProvider>
@@ -69,7 +61,7 @@ export default function RootLayout() {
   }
 
   return (
-    <View style={styles.webBackground}>
+    <View style={[styles.webBackground, { backgroundColor: colors.chip }]}>
       <View
         style={[
           styles.phoneFrame,
@@ -91,7 +83,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 16,
-    backgroundColor: "#dfe3e8",
   },
   phoneFrame: {
     width: "100%",

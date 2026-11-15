@@ -1,8 +1,6 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
-import { Appearance, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { useThemeColors } from "../../../utils/theme";
+import { useTheme } from "../../../utils/theme";
 
 const options = [
   { label: "시스템 설정", value: "auto" },
@@ -11,34 +9,7 @@ const options = [
 ];
 
 export default function SettingsScreen() {
-  const colors = useThemeColors();
-  const [themeMode, setThemeMode] = useState("auto");
-
-  useEffect(() => {
-    async function loadTheme() {
-      try {
-        const savedTheme = await AsyncStorage.getItem("themeMode");
-        if (options.some((option) => option.value === savedTheme)) {
-          setThemeMode(savedTheme);
-        }
-      } catch (error) {
-        console.error("테마 설정 불러오기 실패", error);
-      }
-    }
-
-    loadTheme();
-  }, []);
-
-  const changeTheme = async (mode) => {
-    setThemeMode(mode);
-    Appearance.setColorScheme(mode);
-
-    try {
-      await AsyncStorage.setItem("themeMode", mode);
-    } catch (error) {
-      console.error("테마 설정 저장 실패", error);
-    }
-  };
+  const { colors, themeMode, setThemeMode } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -47,7 +18,7 @@ export default function SettingsScreen() {
       {options.map((option) => (
         <Pressable
           key={option.value}
-          onPress={() => changeTheme(option.value)}
+          onPress={() => setThemeMode(option.value)}
           style={styles.option}
         >
           <Text style={[styles.optionText, { color: colors.text }]}>
