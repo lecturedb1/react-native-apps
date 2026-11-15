@@ -1,85 +1,59 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { fetch as expoFetch } from "expo/fetch";
 import Feather from "@expo/vector-icons/Feather";
 import { Alert } from "react-native";
 import { ActivityIndicator } from "react-native";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { RecipeContext } from "../context/RecipeContext";
-import { createUploadFile, getImageUri } from "../utils/imageStorage";
+import { getImageUri } from "../utils/imageStorage";
 import { useThemeColors } from "../utils/theme";
+
+function createSampleRecipe(recipe) {
+  return `공개 데모용 샘플 레시피입니다.
+
+레시피: ${recipe.title}
+카테고리: ${recipe.category}
+조리 시간: ${recipe.cookingTime}분
+
+재료
+- ${recipe.title}용 주재료 300g
+- 양파 1/2개
+- 다진 마늘 1작은술
+- 식용유 1큰술
+- 소금과 후추 약간
+
+조리 순서
+1. 모든 재료를 먹기 좋은 크기로 손질합니다.
+2. 팬을 중불로 달군 뒤 식용유와 다진 마늘을 넣어 볶습니다.
+3. 준비한 재료를 넣고 골고루 익힙니다.
+4. 소금과 후추로 간을 맞춘 뒤 그릇에 담습니다.
+
+조리 팁
+- 재료와 조리법은 기능 시연을 위한 예시이며 실제 요리에는 알맞게 조절하세요.`;
+}
 
 export default function RecipeDetail({ recipe }) {
   const colors = useThemeColors();
   const { updateRecipe } = useContext(RecipeContext);
   const imageAnimation = useRef(new Animated.Value(0)).current;
   const [recipeIntro, setRecipeIntro] = useState(
-    recipe.generatedRecipe ?? "이곳에 레시피 상세 내용이 표시됩니다.",
+    recipe.generatedRecipe ?? "샘플 레시피를 확인할 수 있습니다.",
   );
-  const [isLoading, setIsLoading] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
 
-  const handleCreateRecipe = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(
-        "https://recipe-api-vert.vercel.app/api/recipe",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: recipe.title,
-            category: recipe.category,
-            cookingTime: recipe.cookingTime,
-            description: recipe.description,
-          }),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error();
-      }
-
-      const data = await response.json();
-      const generatedRecipe = data.message ?? JSON.stringify(data);
-      setRecipeIntro(generatedRecipe);
-      updateRecipe(recipe.id, { generatedRecipe });
-    } catch {
-      setRecipeIntro("레시피를 불러오지 못했습니다.");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleCreateRecipe = () => {
+    const generatedRecipe = createSampleRecipe(recipe);
+    setRecipeIntro(generatedRecipe);
+    updateRecipe(recipe.id, { generatedRecipe });
   };
 
   const handleShare = async () => {
-    if (!recipe.image) {
-      Alert.alert("이미지 필요", "공유하려면 먼저 요리 이미지를 추가해주세요.");
-      return;
-    }
-
     try {
       setIsSharing(true);
-      const imageUri = getImageUri(recipe.image);
-      const formData = new FormData();
-      formData.append("recipe", JSON.stringify(recipe));
-      formData.append("image", await createUploadFile(imageUri));
-
-      const response = await expoFetch(
-        "https://recipe-api-vert.vercel.app/api/upload",
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(`${response.status}: ${await response.text()}`);
-      }
+      await new Promise((resolve) => setTimeout(resolve, 700));
 
       updateRecipe(recipe.id, { isShared: true });
-      Alert.alert("공유 완료", "레시피가 클라우드에 업로드됐습니다.");
-    } catch (error) {
-      Alert.alert("공유 실패", error.message);
+      Alert.alert("공유 완료", "공개 데모용 공유 처리가 완료됐습니다.");
     } finally {
       setIsSharing(false);
     }
@@ -157,17 +131,14 @@ export default function RecipeDetail({ recipe }) {
             레시피 소개
           </Text>
           <Pressable
-            disabled={isLoading || recipe.isDownloaded}
+            disabled={recipe.isDownloaded}
             onPress={handleCreateRecipe}
             style={[
               styles.createButton,
               recipe.isDownloaded && { display: "none" },
-              isLoading && styles.disabledButton,
             ]}
           >
-            <Text style={styles.createButtonText}>
-              {isLoading ? "생성 중..." : "레시피 생성"}
-            </Text>
+            <Text style={styles.createButtonText}>레시피 생성</Text>
           </Pressable>
         </View>
         <Text style={{ color: colors.text }}>{recipeIntro}</Text>

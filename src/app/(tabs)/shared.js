@@ -1,6 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   FlatList,
   Image,
@@ -11,26 +10,13 @@ import {
 } from "react-native";
 
 import { RecipeContext } from "../../../context/RecipeContext";
+import sharedRecipes from "../../../data/sharedRecipes";
 import { useThemeColors } from "../../../utils/theme";
 
 export default function SharedScreen() {
   const colors = useThemeColors();
   const { recipeList, addRecipe } = useContext(RecipeContext);
-  const [recipes, setRecipes] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState(null);
-
-  useEffect(() => {
-    fetch("https://recipe-api-vert.vercel.app/api/recipes")
-      .then((response) => {
-        if (!response.ok) throw new Error();
-        return response.json();
-      })
-      .then((data) => setRecipes(data))
-      .catch(() => setError("공유 레시피를 불러오지 못했습니다."))
-      .finally(() => setIsLoading(false));
-  }, []);
 
   const handleDownload = (recipe) => {
     if (recipeList.some((item) => item.id === recipe.id)) {
@@ -42,25 +28,9 @@ export default function SharedScreen() {
     Alert.alert("저장 완료", "레시피를 앱에 저장했습니다.");
   };
 
-  if (isLoading) {
-    return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <Text style={{ color: colors.text }}>{error}</Text>
-      </View>
-    );
-  }
-
   return (
     <FlatList
-      data={recipes}
+      data={sharedRecipes}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => {
         const isSaved = recipeList.some((recipe) => recipe.id === item.id);
@@ -120,11 +90,6 @@ export default function SharedScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   content: {
     padding: 16,
   },

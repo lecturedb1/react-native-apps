@@ -7,8 +7,3 @@ export function getImageUri(image) {
 }
 
 export function deleteImage() {}
-
-export async function createUploadFile(uri) {
-  const response = await fetch(uri);
-  return response.blob();
-}
